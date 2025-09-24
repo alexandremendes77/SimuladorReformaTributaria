@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador da Reforma Tributária - Lucro Real</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ícones SVG customizados */
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+        .text-red-500 { color: #ef4444; }
+        .text-green-500 { color: #10b981; }
+        .text-gray-500 { color: #6b7280; }
+        .text-blue-600 { color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-7xl mx-auto p-6 bg-white">
+        <!-- Cabeçalho -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <svg class="icon icon-lg text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                Simulador da Reforma Tributária - Lucro Real
+            </h1>
+            <p class="text-gray-600">Compare a tributação atual com o novo sistema CBS + IBS</p>
+        </div>
+
+        <!-- Parâmetros de Simulação -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 p-6 bg-gray-50 rounded-lg">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Compra</label>
+                <input
+                    type="number"
+                    id="valorCompra"
+                    value="1000"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Venda</label>
+                <input
+                    type="number"
+                    id="valorVenda"
+                    value="1500"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">ICMS Estado Origem (%)</label>
+                <input
+                    type="text"
+                    id="icmsOrigem"
+                    value="18"
+                    placeholder="Ex: 18"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    Alíquota de ICMS na origem
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">ICMS Estado Destino (%)</label>
+                <input
+                    type="text"
+                    id="icmsDestino"
+                    value="18"
+                    placeholder="Ex: 18"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    Alíquota de ICMS no destino
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-lg text-center">
+                    <div class="text-sm text-gray-600">Margem</div>
+                    <div class="text-lg font-bold text-blue-600" id="margem">
+                        50.00%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparação Lado a Lado -->
+        <div class="grid lg:grid-cols-3 gap-6 mb-8" id="comparacao">
+            
+            <!-- Sistema Atual -->
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-red-800 mb-4">Sistema Atual</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Créditos na Compra</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS (9,25%)</span>
+                                <span id="atual-credito-piscofins">R$ 92,50</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS (<span id="atual-icms-origem-label">18,00%</span>)</span>
+                                <span id="atual-credito-icms">R$ 180,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Créditos</span>
+                                <span id="atual-total-creditos">R$ 272,50</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Débitos na Venda</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS (9,25%)</span>
+                                <span id="atual-debito-piscofins">R$ 138,75</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS (<span id="atual-icms-destino-label">18,00%</span>)</span>
+                                <span id="atual-debito-icms">R$ 270,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Débitos</span>
+                                <span id="atual-total-debitos">R$ 408,75</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-100 p-3 rounded">
+                        <h3 class="font-semibold text-red-800 mb-2">A Recolher</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS</span>
+                                <span id="atual-recolher-piscofins">R$ 46,25</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS</span>
+                                <span id="atual-recolher-icms">R$ 90,00</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t pt-1">
+                                <span>Total Tributos Consumo</span>
+                                <span id="atual-total-recolher">R$ 136,25</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Novo Sistema -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-green-800 mb-4">Novo Sistema (CBS + IBS)</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Créditos na Compra</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS (27%)</span>
+                                <span id="novo-credito-cbsibs">R$ 270,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Créditos</span>
+                                <span id="novo-total-creditos">R$ 270,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Débitos na Venda</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS (27%)</span>
+                                <span id="novo-debito-cbsibs">R$ 405,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Débitos</span>
+                                <span id="novo-total-debitos">R$ 405,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-100 p-3 rounded">
+                        <h3 class="font-semibold text-green-800 mb-2">A Recolher</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS</span>
+                                <span id="novo-recolher-cbsibs">R$ 135,00</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t pt-1">
+                                <span>Total Tributos Consumo</span>
+                                <span id="novo-total-recolher">R$ 135,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diferenças -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-blue-800 mb-4">Diferenças</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            Tributos sobre Consumo
+                            <span id="icon-tributos-consumo"></span>
+                        </h3>
+                        <div class="text-lg font-bold" id="diferenca-tributos-consumo">
+                            -R$ 1,25
+                        </div>
+                        <div class="text-sm text-gray-600" id="percentual-tributos-consumo">
+                            -0.92% vs. sistema atual
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            Lucro Líquido
+                            <span id="icon-lucro-liquido"></span>
+                        </h3>
+                        <div class="text-lg font-bold" id="diferenca-lucro-liquido">
+                            +R$ 1,25
+                        </div>
+                        <div class="text-sm text-gray-600" id="percentual-lucro-liquido">
+                            +0.11% vs. sistema atual
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2">Alíquota Efetiva</h3>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-sm">
+                                <span>Atual:</span>
+                                <span id="aliquota-atual">21.08%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Nova:</span>
+                                <span id="aliquota-nova">21.00%</span>
+                            </div>
+                            <div class="flex justify-between font-bold" id="diferenca-aliquota-container">
+                                <span>Diferença:</span>
+                                <span id="diferenca-aliquota">-0.08%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo Final -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Resumo Comparativo</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span>Tributos sobre Consumo:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-consumo-valores">R$ 136,25 → R$ 135,00</div>
+                            <div class="font-bold" id="resumo-consumo-diferenca">
+                                -R$ 1,25
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span>Tributos sobre Lucro (IR+CSLL):</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-lucro-valores">R$ 180,00 → R$ 180,00</div>
+                            <div class="font-bold" id="resumo-lucro-diferenca">
+                                R$ 0,00
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center border-t pt-2">
+                        <span class="font-bold">Total de Tributos:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-total-valores">R$ 316,25 → R$ 315,00</div>
+                            <div class="font-bold text-lg" id="resumo-total-diferenca">
+                                -R$ 1,25
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center border-t pt-2">
+                        <span class="font-bold">Lucro Líquido:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-lucro-liquido-valores">R$ 1.183,75 → R$ 1.185,00</div>
+                            <div class="font-bold text-lg" id="resumo-lucro-liquido-diferenca">
+                                +R$ 1,25
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-yellow-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Observações Importantes
+                </h3>
+                <ul class="text-sm space-y-2 text-yellow-800">
+                    <li>• As alíquotas do novo sistema são estimativas (CBS + IBS = 27%)</li>
+                    <li>• IR e CSLL permanecem inalterados nos dois sistemas</li>
+                    <li>• Novo sistema elimina guerra fiscal entre estados</li>
+                    <li>• Crédito integral sobre todos os insumos e investimentos</li>
+                    <li>• Período de transição: 2026-2033</li>
+                    <li>• Alguns produtos terão alíquotas reduzidas ou isenção</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cenários Pré-definidos -->
+        <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Cenários Pré-definidos</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <button
+                    onclick="setCenario(500, 750, '18', '20')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Pequeno</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 500 → Venda: R$ 750</div>
+                    <div class="text-sm text-gray-600">Margem: 50% | ICMS: 18% → 20%</div>
+                </button>
+                
+                <button
+                    onclick="setCenario(2000, 2800, '18', '18')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Médio</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 2.000 → Venda: R$ 2.800</div>
+                    <div class="text-sm text-gray-600">Margem: 40% | ICMS: 18% → 18%</div>
+                </button>
+                
+                <button
+                    onclick="setCenario(10000, 12000, '17', '18')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Grande</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 10.000 → Venda: R$ 12.000</div>
+                    <div class="text-sm text-gray-600">Margem: 20% | ICMS: 17% → 18%</div>
+                </button>
+            </div>
+        </div>
+            </div>
+            
+      <!-- Tabela SIMTAX - Alíquotas ICMS -->
+      <div class="w-full max-w-6xl mx-auto mt-8 px-4">
+          <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">Tabela SIMTAX - Alíquotas Interestaduais de ICMS</h1>
+          <div class="bg-white rounded-lg shadow-lg p-6 text-center mx-auto">
+              <img src="icms-2025-interestadual-1.png" alt="Tabela SIMTAX - Alíquotas Interestaduais de ICMS 2025" class="max-w-full h-auto rounded-lg border border-gray-200 mx-auto">
+          </div>
+      </div>
+
+    <script>
+        // Alíquotas atuais
+        const aliquotasAtuais = {
+            pisConfins: 0.0925, // 9,25% (3,65% + 5,6%)
+            irpj: 0.15,
+            csll: 0.09
+        };
+
+        // Novas alíquotas estimadas
+        const novasAliquotas = {
+            total: 0.27, // 27% total (CBS + IBS)
+            irpj: 0.15,
+            csll: 0.09
+        };
+
+        // Função para formatar moeda
+        function formatMoney(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        // Função para formatar porcentagem
+        function formatPercent(value) {
+            return `${value.toFixed(2)}%`;
+        }
+
+        // Função para obter ícone de diferença
+        function getDiferencaIcon(valor) {
+            if (Math.abs(valor) < 0.01) {
+                return '<svg class="icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>';
+            }
+            return valor > 0 
+                ? '<svg class="icon text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>'
+                : '<svg class="icon text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>';
+        }
+
+        // Função para obter cor da diferença
+        function getDiferencaColor(valor) {
+            if (Math.abs(valor) < 0.01) return 'text-gray-500';
+            return valor > 0 ? 'text-red-500' : 'text-green-500';
+        }
+
+        // Função para calcular sistema atual
+        function calcularSistemaAtual() {
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            const icmsOrigemDecimal = (parseFloat(document.getElementById('icmsOrigem').value) || 0) / 100;
+            const icmsDestinoDecimal = (parseFloat(document.getElementById('icmsDestino').value) || 0) / 100;
+            
+            // Compra
+            const creditoPisCofinCompra = valorCompra * aliquotasAtuais.pisConfins;
+            const creditoIcmsCompra = valorCompra * icmsOrigemDecimal;
+            const totalCreditosCompra = creditoPisCofinCompra + creditoIcmsCompra;
+
+            // Venda
+            const debitoPisCofinVenda = valorVenda * aliquotasAtuais.pisConfins;
+            const debitoIcmsVenda = valorVenda * icmsDestinoDecimal;
+            const totalDebitosVenda = debitoPisCofinVenda + debitoIcmsVenda;
+
+            // A recolher
+            const pisCofinRecolher = Math.max(0, debitoPisCofinVenda - creditoPisCofinCompra);
+            const icmsRecolher = Math.max(0, debitoIcmsVenda - creditoIcmsCompra);
+            const totalRecolher = pisCofinRecolher + icmsRecolher;
+
+            // Lucro e IR/CSLL
+            const lucroAntesTributos = valorVenda - valorCompra - totalRecolher;
+            const irpjDevido = lucroAntesTributos * aliquotasAtuais.irpj;
+            const csllDevido = lucroAntesTributos * aliquotasAtuais.csll;
+            const totalIrCsll = irpjDevido + csllDevido;
+            const lucroLiquido = lucroAntesTributos - totalIrCsll;
+
+            return {
+                compra: {
+                    creditoPisCofins: creditoPisCofinCompra,
+                    creditoIcms: creditoIcmsCompra,
+                    totalCreditos: totalCreditosCompra
+                },
+                venda: {
+                    debitoPisCofins: debitoPisCofinVenda,
+                    debitoIcms: debitoIcmsVenda,
+                    totalDebitos: totalDebitosVenda
+                },
+                recolhimento: {
+                    pisCofins: pisCofinRecolher,
+                    icms: icmsRecolher,
+                    total: totalRecolher
+                },
+                resultado: {
+                    lucroAntesTributos,
+                    irpj: irpjDevido,
+                    csll: csllDevido,
+                    totalIrCsll,
+                    lucroLiquido
+                },
+                resumo: {
+                    tributosConsumo: totalRecolher,
+                    tributosLucro: totalIrCsll,
+                    totalTributos: totalRecolher + totalIrCsll,
+                    aliquotaEfetiva: (totalRecolher + totalIrCsll) / valorVenda * 100
+                }
+            };
+        }
+
+        // Função para calcular novo sistema
+        function calcularNovoSistema() {
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            
+            // Compra
+            const creditoCbsIbsCompra = valorCompra * novasAliquotas.total;
+
+            // Venda  
+            const debitoCbsIbsVenda = valorVenda * novasAliquotas.total;
+
+            // A recolher
+            const cbsIbsRecolher = Math.max(0, debitoCbsIbsVenda - creditoCbsIbsCompra);
+
+            // Lucro e IR/CSLL (mantém igual)
+            const lucroAntesTributos = valorVenda - valorCompra - cbsIbsRecolher;
+            const irpjDevido = lucroAntesTributos * novasAliquotas.irpj;
+            const csllDevido = lucroAntesTributos * novasAliquotas.csll;
+            const totalIrCsll = irpjDevido + csllDevido;
+            const lucroLiquido = lucroAntesTributos - totalIrCsll;
+
+            return {
+                compra: {
+                    creditoCbsIbs: creditoCbsIbsCompra,
+                    totalCreditos: creditoCbsIbsCompra
+                },
+                venda: {
+                    debitoCbsIbs: debitoCbsIbsVenda,
+                    totalDebitos: debitoCbsIbsVenda
+                },
+                recolhimento: {
+                    cbsIbs: cbsIbsRecolher,
+                    total: cbsIbsRecolher
+                },
+                resultado: {
+                    lucroAntesTributos,
+                    irpj: irpjDevido,
+                    csll: csllDevido,
+                    totalIrCsll,
+                    lucroLiquido
+                },
+                resumo: {
+                    tributosConsumo: cbsIbsRecolher,
+                    tributosLucro: totalIrCsll,
+                    totalTributos: cbsIbsRecolher + totalIrCsll,
+                    aliquotaEfetiva: (cbsIbsRecolher + totalIrCsll) / valorVenda * 100
+                }
+            };
+        }
+
+        // Função para atualizar os cálculos
+        function atualizarCalculos() {
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            const icmsOrigem = parseFloat(document.getElementById('icmsOrigem').value) || 0;
+            const icmsDestino = parseFloat(document.getElementById('icmsDestino').value) || 0;
+
+            // Atualizar margem
+            const margem = valorCompra > 0 ? (valorVenda - valorCompra) / valorCompra * 100 : 0;
+            document.getElementById('margem').textContent = formatPercent(margem);
+
+            // Calcular sistemas
+            const sistemaAtual = calcularSistemaAtual();
+            const novoSistema = calcularNovoSistema();
+            
+            const diferenca = {
+                tributosConsumo: novoSistema.resumo.tributosConsumo - sistemaAtual.resumo.tributosConsumo,
+                tributosLucro: novoSistema.resumo.tributosLucro - sistemaAtual.resumo.tributosLucro,
+                totalTributos: novoSistema.resumo.totalTributos - sistemaAtual.resumo.totalTributos,
+                lucroLiquido: novoSistema.resultado.lucroLiquido - sistemaAtual.resultado.lucroLiquido,
+                aliquotaEfetiva: novoSistema.resumo.aliquotaEfetiva - sistemaAtual.resumo.aliquotaEfetiva
+            };
+
+            // Atualizar Sistema Atual
+            document.getElementById('atual-credito-piscofins').textContent = formatMoney(sistemaAtual.compra.creditoPisCofins);
+            document.getElementById('atual-credito-icms').textContent = formatMoney(sistemaAtual.compra.creditoIcms);
+            document.getElementById('atual-total-creditos').textContent = formatMoney(sistemaAtual.compra.totalCreditos);
+            document.getElementById('atual-debito-piscofins').textContent = formatMoney(sistemaAtual.venda.debitoPisCofins);
+            document.getElementById('atual-debito-icms').textContent = formatMoney(sistemaAtual.venda.debitoIcms);
+            document.getElementById('atual-total-debitos').textContent = formatMoney(sistemaAtual.venda.totalDebitos);
+            document.getElementById('atual-recolher-piscofins').textContent = formatMoney(sistemaAtual.recolhimento.pisCofins);
+            document.getElementById('atual-recolher-icms').textContent = formatMoney(sistemaAtual.recolhimento.icms);
+            document.getElementById('atual-total-recolher').textContent = formatMoney(sistemaAtual.recolhimento.total);
+            document.getElementById('atual-icms-origem-label').textContent = formatPercent(icmsOrigem);
+            document.getElementById('atual-icms-destino-label').textContent = formatPercent(icmsDestino);
+
+            // Atualizar Novo Sistema
+            document.getElementById('novo-credito-cbsibs').textContent = formatMoney(novoSistema.compra.creditoCbsIbs);
+            document.getElementById('novo-total-creditos').textContent = formatMoney(novoSistema.compra.totalCreditos);
+            document.getElementById('novo-debito-cbsibs').textContent = formatMoney(novoSistema.venda.debitoCbsIbs);
+            document.getElementById('novo-total-debitos').textContent = formatMoney(novoSistema.venda.totalDebitos);
+            document.getElementById('novo-recolher-cbsibs').textContent = formatMoney(novoSistema.recolhimento.cbsIbs);
+            document.getElementById('novo-total-recolher').textContent = formatMoney(novoSistema.recolhimento.total);
+
+            // Atualizar Diferenças
+            document.getElementById('icon-tributos-consumo').innerHTML = getDiferencaIcon(diferenca.tributosConsumo);
+            document.getElementById('diferenca-tributos-consumo').textContent = 
+                (diferenca.tributosConsumo >= 0 ? '+' : '') + formatMoney(diferenca.tributosConsumo);
+            document.getElementById('diferenca-tributos-consumo').className = 
+                `text-lg font-bold ${getDiferencaColor(diferenca.tributosConsumo)}`;
+            document.getElementById('percentual-tributos-consumo').textContent = 
+                sistemaAtual.resumo.tributosConsumo > 0 ? 
+                formatPercent((diferenca.tributosConsumo / sistemaAtual.resumo.tributosConsumo) * 100) + ' vs. sistema atual' : 
+                'N/A';
+
+            document.getElementById('icon-lucro-liquido').innerHTML = getDiferencaIcon(-diferenca.lucroLiquido);
+            document.getElementById('diferenca-lucro-liquido').textContent = 
+                (diferenca.lucroLiquido >= 0 ? '+' : '') + formatMoney(diferenca.lucroLiquido);
+            document.getElementById('diferenca-lucro-liquido').className = 
+                `text-lg font-bold ${getDiferencaColor(-diferenca.lucroLiquido)}`;
+            document.getElementById('percentual-lucro-liquido').textContent = 
+                sistemaAtual.resultado.lucroLiquido > 0 ? 
+                formatPercent((diferenca.lucroLiquido / sistemaAtual.resultado.lucroLiquido) * 100) + ' vs. sistema atual' : 
+                'N/A';
+
+            document.getElementById('aliquota-atual').textContent = formatPercent(sistemaAtual.resumo.aliquotaEfetiva);
+            document.getElementById('aliquota-nova').textContent = formatPercent(novoSistema.resumo.aliquotaEfetiva);
+            document.getElementById('diferenca-aliquota').textContent = 
+                (diferenca.aliquotaEfetiva >= 0 ? '+' : '') + formatPercent(diferenca.aliquotaEfetiva);
+            document.getElementById('diferenca-aliquota-container').className = 
+                `flex justify-between font-bold ${getDiferencaColor(diferenca.aliquotaEfetiva)}`;
+
+            // Atualizar Resumo
+            document.getElementById('resumo-consumo-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.tributosConsumo)} → ${formatMoney(novoSistema.resumo.tributosConsumo)}`;
+            document.getElementById('resumo-consumo-diferenca').textContent = 
+                (diferenca.tributosConsumo >= 0 ? '+' : '') + formatMoney(diferenca.tributosConsumo);
+            document.getElementById('resumo-consumo-diferenca').className = 
+                `font-bold ${getDiferencaColor(diferenca.tributosConsumo)}`;
+
+            document.getElementById('resumo-lucro-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.tributosLucro)} → ${formatMoney(novoSistema.resumo.tributosLucro)}`;
+            document.getElementById('resumo-lucro-diferenca').textContent = 
+                (diferenca.tributosLucro >= 0 ? '+' : '') + formatMoney(diferenca.tributosLucro);
+            document.getElementById('resumo-lucro-diferenca').className = 
+                `font-bold ${getDiferencaColor(diferenca.tributosLucro)}`;
+
+            document.getElementById('resumo-total-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.totalTributos)} → ${formatMoney(novoSistema.resumo.totalTributos)}`;
+            document.getElementById('resumo-total-diferenca').textContent = 
+                (diferenca.totalTributos >= 0 ? '+' : '') + formatMoney(diferenca.totalTributos);
+            document.getElementById('resumo-total-diferenca').className = 
+                `font-bold text-lg ${getDiferencaColor(diferenca.totalTributos)}`;
+
+            document.getElementById('resumo-lucro-liquido-valores').textContent = 
+                `${formatMoney(sistemaAtual.resultado.lucroLiquido)} → ${formatMoney(novoSistema.resultado.lucroLiquido)}`;
+            document.getElementById('resumo-lucro-liquido-diferenca').textContent = 
+                (diferenca.lucroLiquido >= 0 ? '+' : '') + formatMoney(diferenca.lucroLiquido);
+            document.getElementById('resumo-lucro-liquido-diferenca').className = 
+                `font-bold text-lg ${getDiferencaColor(-diferenca.lucroLiquido)}`;
+        }
+
+        // Função para definir cenário
+        function setCenario(valorCompra, valorVenda, icmsOrigem, icmsDestino) {
+            document.getElementById('valorCompra').value = valorCompra;
+            document.getElementById('valorVenda').value = valorVenda;
+            document.getElementById('icmsOrigem').value = icmsOrigem;
+            document.getElementById('icmsDestino').value = icmsDestino;
+            atualizarCalculos();
+        }
+
+        // Função para validar entrada de ICMS
+        function validarIcms(input) {
+            const value = input.value;
+            // Permite apenas números, ponto e vírgula
+            if (!/^\d*[.,]?\d*$/.test(value)) {
+                input.value = value.slice(0, -1);
+                return;
+            }
+        }
+
+        function formatarIcms(input) {
+            // Ao sair do campo, formatar o valor
+            const numValue = parseFloat(input.value.replace(',', '.')) || 0;
+            if (numValue > 30) {
+                input.value = '30';
+            } else {
+                input.value = numValue.toString();
+            }
+            atualizarCalculos();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar event listeners aos inputs
+            document.getElementById('valorCompra').addEventListener('input', atualizarCalculos);
+            document.getElementById('valorVenda').addEventListener('input', atualizarCalculos);
+            
+            // ICMS com validação
+            document.getElementById('icmsOrigem').addEventListener('input', function() {
+                validarIcms(this);
+                atualizarCalculos();
+            });
+            document.getElementById('icmsOrigem').addEventListener('blur', function() {
+                formatarIcms(this);
+            });
+            
+            document.getElementById('icmsDestino').addEventListener('input', function() {
+                validarIcms(this);
+                atualizarCalculos();
+            });
+            document.getElementById('icmsDestino').addEventListener('blur', function() {
+                formatarIcms(this);
+            });
+
+            // Calcular valores iniciais
+            atualizarCalculos();
+        });
+    </script>
+</body>
+</html>
