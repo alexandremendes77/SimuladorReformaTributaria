@@ -3,1278 +3,885 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Solicitação de Demandas de TI e Inovação</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Simulador da Reforma Tributária - Lucro Real</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --background: hsl(0 0% 100%);
-            --foreground: hsl(0 0% 20%);
-            --card: hsl(0 0% 100%);
-            --card-foreground: hsl(0 0% 20%);
-            --popover: hsl(0 0% 100%);
-            --popover-foreground: hsl(0 0% 20%);
-            --primary: hsl(205.4 98.6% 27.3%);
-            --primary-foreground: hsl(0 0% 100%);
-            --secondary: hsl(220 14.3% 95.9%);
-            --secondary-foreground: hsl(215 13.8% 34.1%);
-            --muted: hsl(210 20% 98%);
-            --muted-foreground: hsl(220 8.9% 46.1%);
-            --accent: hsl(204 93.8% 93.7%);
-            --accent-foreground: hsl(224.4 64.3% 32.9%);
-            --destructive: hsl(0 84.2% 60.2%);
-            --destructive-foreground: hsl(0 0% 100%);
-            --border: hsl(220 13% 91%);
-            --input: hsl(220 13% 91%);
-            --ring: hsl(217.2 91.2% 59.8%);
-            --radius: 0.375rem;
+        /* Ícones SVG customizados */
+        .icon {
+            width: 1rem;
+            height: 1rem;
+            display: inline-block;
+            vertical-align: middle;
         }
-
-        * {
-            box-sizing: border-box;
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
         }
-        
-        html {
-            height: 100vh;
-            overflow: hidden !important;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background);
-            color: var(--foreground);
-            height: 100vh;
-            overflow: hidden !important;
-            margin: 0;
-            padding: 0;
-            position: fixed;
-            width: 100%;
-            overscroll-behavior: none;
-        }
-        
-        .preview-content {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        /* Configurações de scroll personalizadas */
-        #chat-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        #chat-container::-webkit-scrollbar-thumb {
-            background-color: var(--border);
-            border-radius: 3px;
-        }
-        #chat-container::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-        #chat-container {
-            scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
-            scroll-behavior: smooth;
-        }
-        
-        /* Garante que apenas o chat tenha scroll */
-        .overflow-y-auto {
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-        }
-        
-        /* Remove qualquer scroll da página principal */
-        #main-grid, #chat-column, #preview-column {
-            overflow: hidden;
-        }
-        
-        /* Garante altura fixa para containers */
-        .h-full {
-            height: 100% !important;
-        }
-        
-        .flex-1 {
-            flex: 1 1 0% !important;
-        }
-        
-        .min-h-0 {
-            min-height: 0px !important;
-        }
-        
-        /* Ajustes específicos para mobile */
-        @media (max-width: 640px) {
-            body {
-                padding: 0;
-            }
-            
-            #chat-container {
-                padding-right: 8px;
-                max-height: calc(100vh - 280px) !important; /* Limita altura para deixar espaço para input */
-            }
-            
-            .space-y-4 > * + * {
-                margin-top: 12px;
-            }
-            
-            /* Reduz padding dos botões em mobile */
-            button {
-                padding: 8px 16px !important;
-            }
-            
-            /* Ajusta altura mínima do textarea em mobile */
-            textarea {
-                min-height: 80px !important;
-            }
-            
-            /* Garante que o input container tenha altura fixa */
-            #input-container {
-                min-height: 120px;
-                max-height: 120px;
-            }
-            
-            /* Ajusta o container principal em mobile */
-            #chat-column .bg-card {
-                max-height: calc(100vh - 120px);
-            }
-            
-            /* Força o botão a sempre ficar visível */
-            #input-container button {
-                position: sticky;
-                bottom: 0;
-                z-index: 10;
-            }
-            
-            /* Ajusta altura do título em mobile */
-            #chat-column h2 {
-                margin-bottom: 8px !important;
-                padding-bottom: 8px !important;
-            }
-            
-            /* Garante que inputs de data sejam visíveis no mobile */
-            input[type="date"] {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                background-color: var(--background) !important;
-                border: 1px solid var(--border) !important;
-                padding: 12px !important;
-                font-size: 16px !important; /* Evita zoom no iOS */
-                min-height: 48px !important; /* Altura mínima para touch */
-                width: 100% !important;
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
-            
-            /* Estilo específico para o seletor de data no mobile */
-            input[type="date"]::-webkit-calendar-picker-indicator {
-                background: transparent;
-                bottom: 0;
-                color: transparent;
-                cursor: pointer;
-                height: auto;
-                left: 0;
-                position: absolute;
-                right: 0;
-                top: 0;
-                width: auto;
-            }
-            
-            /* Ajustes específicos para a página de preview no mobile */
-            #preview-column .bg-card {
-                max-height: calc(100vh - 100px);
-            }
-            
-            #preview-column .overflow-y-auto {
-                max-height: calc(100vh - 200px);
-                padding-bottom: 20px;
-            }
-            
-            #preview-column h2 {
-                margin-bottom: 8px !important;
-                padding-bottom: 8px !important;
-            }
-            
-            #sendEmailButton {
-                position: sticky;
-                bottom: 0;
-                z-index: 10;
-                margin-top: 12px !important;
-            }
-        }
-        
-        /* Estilos gerais para inputs de data */
-        input[type="date"] {
-            background-color: var(--background);
-            border: 1px solid var(--border);
-            color: var(--foreground);
-            font-family: inherit;
-        }
-        
-        input[type="date"]:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-        .chat-bubble-bot {
-            animation: slideInUp 0.5s ease-out;
-        }
-        .chat-bubble-user {
-            animation: slideInUp 0.5s ease-out;
-        }
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .typing-indicator span {
-            animation: blink 1.4s infinite both;
-        }
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        @keyframes blink {
-            0%, 80%, 100% {
-                opacity: 0;
-            }
-            40% {
-                opacity: 1;
-            }
-        }
+        .text-red-500 { color: #ef4444; }
+        .text-green-500 { color: #10b981; }
+        .text-gray-500 { color: #6b7280; }
+        .text-blue-600 { color: #2563eb; }
     </style>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        background: 'var(--background)',
-                        foreground: 'var(--foreground)',
-                        card: 'var(--card)',
-                        'card-foreground': 'var(--card-foreground)',
-                        primary: 'var(--primary)',
-                        'primary-foreground': 'var(--primary-foreground)',
-                        secondary: 'var(--secondary)',
-                        'secondary-foreground': 'var(--secondary-foreground)',
-                        muted: 'var(--muted)',
-                        'muted-foreground': 'var(--muted-foreground)',
-                        accent: 'var(--accent)',
-                        'accent-foreground': 'var(--accent-foreground)',
-                        destructive: 'var(--destructive)',
-                        'destructive-foreground': 'var(--destructive-foreground)',
-                        border: 'var(--border)',
-                        input: 'var(--input)',
-                        ring: 'var(--ring)',
-                    },
-                    borderRadius: {
-                        lg: 'var(--radius)',
-                        md: `calc(var(--radius) - 2px)`,
-                        sm: `calc(var(--radius) - 4px)`
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="antialiased">
+<body class="bg-gray-100">
+    <div class="max-w-7xl mx-auto p-6 bg-white">
+        <!-- Cabeçalho -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <svg class="icon icon-lg text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <span id="tituloSimulador">Simulador da Reforma Tributária - Lucro Real</span>
+            </h1>
+            <p class="text-gray-600">Compare a tributação atual com o novo sistema CBS + IBS</p>
+        </div>
 
-    <div class="w-full h-screen p-1 sm:p-4 flex justify-center overflow-hidden">
-        <div id="main-grid" class="grid gap-2 sm:gap-8 justify-items-center lg:grid-cols-2 lg:gap-16 h-full w-full max-w-7xl overflow-hidden">
+        <!-- Parâmetros de Simulação -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8 p-6 bg-gray-50 rounded-lg">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Regime Tributário</label>
+                <select
+                    id="regimeTributario"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                >
+                    <option value="lucro_real">Lucro Real</option>
+                    <option value="lucro_presumido">Lucro Presumido</option>
+                    <option value="simples_nacional">Simples Nacional</option>
+                </select>
+                <div class="text-xs text-gray-500 mt-1">
+                    Escolha o regime tributário
+                </div>
+            </div>
             
-            <!-- Coluna do Formulário -->
-            <div id="chat-column" class="w-full max-w-4xl h-full flex flex-col overflow-hidden">
-                <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-6 pb-2 sm:pb-3 text-card-foreground flex items-center gap-3 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7 text-primary"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.455.09-.934.09-1.425v-2.288a4.5 4.5 0 0 1 .64-2.288Z" /></svg>
-                    Me conte sobre sua demanda
-                </h2>
-                <div class="bg-card p-3 sm:p-6 rounded-lg border border-border shadow-sm flex-1 flex flex-col overflow-hidden">
-                    <div id="chat-container" class="pr-2 space-y-4 overflow-y-auto flex-1 min-h-0 max-h-full">
-                        <!-- Chat messages will be appended here -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Compra</label>
+                <input
+                    type="number"
+                    id="valorCompra"
+                    value="1000"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Venda</label>
+                <input
+                    type="number"
+                    id="valorVenda"
+                    value="1500"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">ICMS Estado Origem (%)</label>
+                <input
+                    type="text"
+                    id="icmsOrigem"
+                    value="18"
+                    placeholder="Ex: 18"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    Alíquota de ICMS na origem
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">ICMS Estado Destino (%)</label>
+                <input
+                    type="text"
+                    id="icmsDestino"
+                    value="18"
+                    placeholder="Ex: 18"
+                    class="w-full p-2 border border-gray-300 rounded-md"
+                />
+                <div class="text-xs text-gray-500 mt-1">
+                    Alíquota de ICMS no destino
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-lg text-center">
+                    <div class="text-sm text-gray-600">Margem</div>
+                    <div class="text-lg font-bold text-blue-600" id="margem">
+                        50.00%
                     </div>
-                    <div id="typing-indicator" class="hidden flex items-center p-2">
-                         <div class="w-8 h-8 rounded-full bg-muted flex items-center justify-center mr-3">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-muted-foreground"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
-                         </div>
-                        <div class="bg-muted text-muted-foreground rounded-lg p-3">
-                            <div class="typing-indicator">
-                                <span class="w-2 h-2 inline-block bg-muted-foreground rounded-full"></span>
-                                <span class="w-2 h-2 inline-block bg-muted-foreground rounded-full"></span>
-                                <span class="w-2 h-2 inline-block bg-muted-foreground rounded-full"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparação Lado a Lado -->
+        <div class="grid lg:grid-cols-3 gap-6 mb-8" id="comparacao">
+            
+            <!-- Sistema Atual -->
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-red-800 mb-4">Sistema Atual</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Créditos na Compra</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS (9,25%)</span>
+                                <span id="atual-credito-piscofins">R$ 92,50</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS (<span id="atual-icms-origem-label">18,00%</span>)</span>
+                                <span id="atual-credito-icms">R$ 180,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Créditos</span>
+                                <span id="atual-total-creditos">R$ 272,50</span>
                             </div>
                         </div>
                     </div>
-                     <div id="input-container" class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border flex-shrink-0">
-                        <!-- Input fields will be appended here -->
-                    </div>
-                </div>
-            </div>
 
-            <!-- Coluna do Preview -->
-            <div id="preview-column" class="hidden w-full max-w-4xl h-full flex flex-col overflow-hidden">
-                 <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-6 pb-2 sm:pb-3 text-card-foreground flex items-center gap-3 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7 text-primary"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0A2.25 2.25 0 013.75 7.5h16.5a2.25 2.25 0 012.25 2.25m-18.75 0h18.75v-1.5A2.25 2.25 0 0019.5 6h-15A2.25 2.25 0 002.25 8.25v1.5z" /></svg>
-                    Preview da Solicitação
-                </h2>
-                 <div class="bg-card p-3 sm:p-6 rounded-lg border border-border shadow-sm flex-1 flex flex-col overflow-hidden">
-                    <div class="overflow-y-auto flex-1 pb-4">
-                    <div id="previewContent" class="space-y-6">
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">1. Identificação da Demanda</h3>
-                            <div class="mt-2 text-sm space-y-1 pl-3 border-l-2 border-border text-muted-foreground">
-                                <p><strong>Solicitante:</strong> <span id="previewSolicitante" class="text-foreground"></span></p>
-                                <p><strong>Departamento:</strong> <span id="previewDepartamento" class="text-foreground"></span></p>
-                                <p><strong>Data da Solicitação:</strong> <span id="previewDataSolicitacao" class="text-foreground"></span></p>
-                                <p><strong>Prazo Desejado:</strong> <span id="previewPrazoDesejado" class="text-foreground"></span></p>
-                                <p><strong>Prioridade:</strong> <span id="previewPrioridade" class="font-semibold"></span></p>
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Débitos na Venda</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS (9,25%)</span>
+                                <span id="atual-debito-piscofins">R$ 138,75</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS (<span id="atual-icms-destino-label">18,00%</span>)</span>
+                                <span id="atual-debito-icms">R$ 270,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Débitos</span>
+                                <span id="atual-total-debitos">R$ 408,75</span>
                             </div>
                         </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">2. Contexto e Dor</h3>
-                            <p id="previewContexto" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">3. Objetivo e Resultado Esperado</h3>
-                            <p id="previewObjetivo" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">4. Requisitos Funcionais</h3>
-                            <p id="previewReqFuncionais" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">5. Requisitos Técnicos e Restrições</h3>
-                            <p id="previewReqTecnicos" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">6. Usuários e Stakeholders</h3>
-                            <p id="previewUsuarios" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">7. Recursos Disponíveis</h3>
-                            <p id="previewRecursos" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
-                        </div>
-                        <div>
-                            <h3 class="text-md font-semibold text-primary">8. Impacto do Não Atendimento</h3>
-                            <p id="previewImpacto" class="mt-2 text-sm pl-3 border-l-2 border-border preview-content text-foreground"></p>
+                    </div>
+
+                    <div class="bg-red-100 p-3 rounded">
+                        <h3 class="font-semibold text-red-800 mb-2">A Recolher</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>PIS/COFINS</span>
+                                <span id="atual-recolher-piscofins">R$ 46,25</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ICMS</span>
+                                <span id="atual-recolher-icms">R$ 90,00</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t pt-1">
+                                <span>Total Tributos Consumo</span>
+                                <span id="atual-total-recolher">R$ 136,25</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Novo Sistema -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-green-800 mb-4">Novo Sistema (CBS + IBS)</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Créditos na Compra</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS (27%)</span>
+                                <span id="novo-credito-cbsibs">R$ 270,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Créditos</span>
+                                <span id="novo-total-creditos">R$ 270,00</span>
+                            </div>
+                        </div>
                     </div>
-                     <div class="flex gap-3 mt-3 sm:mt-6">
-                        <button id="restartButton" class="flex-1 bg-secondary text-secondary-foreground font-semibold py-2 px-4 rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-opacity flex items-center justify-center gap-2 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                             <span>Recomeçar</span>
-                        </button>
-                        <button id="sendEmailButton" class="flex-1 bg-primary text-primary-foreground font-semibold py-2 px-4 rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-opacity flex items-center justify-center gap-2 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                             <span>Criar Tarefa no Asana</span>
-                        </button>
-                     </div>
-                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Modal de Classificação de Prioridades -->
-    <div id="priorityModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">⚡ Classificação de Prioridades</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-red-200 bg-red-50/50">
-                    <h3 class="font-semibold text-red-800 flex items-center gap-2">🔴 CRÍTICA</h3>
-                    <p class="text-red-700 mt-1"><strong>Definição:</strong> Para sistema fora do ar ou falhas que impedem a operação do negócio.</p>
-                    <p class="text-red-700 mt-1"><strong>Impacto:</strong> Todo o negócio ou uma área crítica é afetado.</p>
-                    <p class="text-red-700 mt-1"><strong>SLA:</strong> Resposta imediata.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">🟠 ALTA</h3>
-                    <p class="text-orange-700 mt-1"><strong>Definição:</strong> Impacta significativamente a produtividade de múltiplos usuários ou processos importantes.</p>
-                    <p class="text-orange-700 mt-1"><strong>SLA:</strong> Resposta em até 24h.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-yellow-200 bg-yellow-50/50">
-                    <h3 class="font-semibold text-yellow-800 flex items-center gap-2">🟡 MÉDIA</h3>
-                    <p class="text-yellow-700 mt-1"><strong>Definição:</strong> Melhorias de processo ou novas funcionalidades importantes com impacto moderado na produtividade.</p>
-                    <p class="text-yellow-700 mt-1"><strong>SLA:</strong> Resposta em até 3 dias úteis.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">🟢 BAIXA</h3>
-                    <p class="text-green-700 mt-1"><strong>Definição:</strong> Melhorias menores ou funcionalidades "nice-to-have" sem impacto crítico no negócio.</p>
-                    <p class="text-green-700 mt-1"><strong>SLA:</strong> Resposta em até 5 dias úteis.</p>
+                    <div>
+                        <h3 class="font-semibold text-gray-700 mb-2">Débitos na Venda</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS (27%)</span>
+                                <span id="novo-debito-cbsibs">R$ 405,00</span>
+                            </div>
+                            <div class="flex justify-between font-semibold border-t pt-1">
+                                <span>Total Débitos</span>
+                                <span id="novo-total-debitos">R$ 405,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-100 p-3 rounded">
+                        <h3 class="font-semibold text-green-800 mb-2">A Recolher</h3>
+                        <div class="text-sm space-y-1">
+                            <div class="flex justify-between">
+                                <span>CBS + IBS</span>
+                                <span id="novo-recolher-cbsibs">R$ 135,00</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t pt-1">
+                                <span>Total Tributos Consumo</span>
+                                <span id="novo-total-recolher">R$ 135,00</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Modal de Dicas para Contexto -->
-    <div id="contextModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeContextModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">📝 Como descrever sua situação</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">❓ Qual problema você está enfrentando?</h3>
-                    <p class="text-blue-700 mt-1">Descreva o problema específico ou a necessidade que motivou esta solicitação.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">🎯 Como isso impacta seu trabalho/departamento?</h3>
-                    <p class="text-purple-700 mt-1">Explique as consequências do problema na produtividade, qualidade ou resultados.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">⏰ Qual a frequência deste problema?</h3>
-                    <p class="text-green-700 mt-1">Indique se acontece diariamente, semanalmente, mensalmente ou em situações específicas.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">👥 Quantas pessoas são afetadas?</h3>
-                    <p class="text-orange-700 mt-1">Informe o número de usuários, equipes ou departamentos impactados pelo problema.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+            <!-- Diferenças -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-blue-800 mb-4">Diferenças</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            Tributos sobre Consumo
+                            <span id="icon-tributos-consumo"></span>
+                        </h3>
+                        <div class="text-lg font-bold" id="diferenca-tributos-consumo">
+                            -R$ 1,25
+                        </div>
+                        <div class="text-sm text-gray-600" id="percentual-tributos-consumo">
+                            -0.92% vs. sistema atual
+                        </div>
+                    </div>
 
-    <!-- Modal de Dicas para Objetivo -->
-    <div id="objetivoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeObjetivoModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">🎯 Como definir seu objetivo</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">🏆 Qual o resultado final desejado?</h3>
-                    <p class="text-blue-700 mt-1">Descreva claramente o que você quer que aconteça após a implementação da solução.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">✅ Como você saberá que o problema foi resolvido?</h3>
-                    <p class="text-green-700 mt-1">Defina critérios objetivos que indicarão que a solução está funcionando adequadamente.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">📊 Quais métricas indicarão o sucesso?</h3>
-                    <p class="text-purple-700 mt-1">Identifique números, percentuais ou indicadores mensuráveis de melhoria (tempo, custo, qualidade, etc.).</p>
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            Lucro Líquido
+                            <span id="icon-lucro-liquido"></span>
+                        </h3>
+                        <div class="text-lg font-bold" id="diferenca-lucro-liquido">
+                            +R$ 1,25
+                        </div>
+                        <div class="text-sm text-gray-600" id="percentual-lucro-liquido">
+                            +0.11% vs. sistema atual
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-100 p-3 rounded">
+                        <h3 class="font-semibold text-blue-800 mb-2">Alíquota Efetiva</h3>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-sm">
+                                <span>Atual:</span>
+                                <span id="aliquota-atual">21.08%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Nova:</span>
+                                <span id="aliquota-nova">21.00%</span>
+                            </div>
+                            <div class="flex justify-between font-bold" id="diferenca-aliquota-container">
+                                <span>Diferença:</span>
+                                <span id="diferenca-aliquota">-0.08%</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal de Dicas para Requisitos Funcionais -->
-    <div id="reqFuncionaisModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeReqFuncionaisModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">⚙️ Como definir requisitos funcionais</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">🔧 Liste as funcionalidades essenciais</h3>
-                    <p class="text-blue-700 mt-1">Descreva as principais funcionalidades que a solução deve ter para resolver o problema.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">🔄 Descreva os fluxos de trabalho necessários</h3>
-                    <p class="text-green-700 mt-1">Explique os processos e sequências de ações que devem ser automatizados ou facilitados.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">🔗 Inclua integrações necessárias com outros sistemas</h3>
-                    <p class="text-purple-700 mt-1">Identifique quais sistemas, APIs ou ferramentas precisam se conectar com a solução.</p>
+        <!-- Resumo Final -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Resumo Comparativo</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span>Tributos sobre Consumo:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-consumo-valores">R$ 136,25 → R$ 135,00</div>
+                            <div class="font-bold" id="resumo-consumo-diferenca">
+                                -R$ 1,25
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span>Tributos sobre Lucro (IR+CSLL):</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-lucro-valores">R$ 180,00 → R$ 180,00</div>
+                            <div class="font-bold" id="resumo-lucro-diferenca">
+                                R$ 0,00
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center border-t pt-2">
+                        <span class="font-bold">Total de Tributos:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-total-valores">R$ 316,25 → R$ 315,00</div>
+                            <div class="font-bold text-lg" id="resumo-total-diferenca">
+                                -R$ 1,25
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center border-t pt-2">
+                        <span class="font-bold">Lucro Líquido:</span>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500" id="resumo-lucro-liquido-valores">R$ 1.183,75 → R$ 1.185,00</div>
+                            <div class="font-bold text-lg" id="resumo-lucro-liquido-diferenca">
+                                +R$ 1,25
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Modal de Dicas para Requisitos Técnicos -->
-    <div id="reqTecnicosModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeReqTecnicosModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">🔧 Como definir requisitos técnicos</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">🔗 Sistemas que devem ser integrados</h3>
-                    <p class="text-blue-700 mt-1">Liste os sistemas, bancos de dados ou APIs que precisam se conectar com a solução.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-red-200 bg-red-50/50">
-                    <h3 class="font-semibold text-red-800 flex items-center gap-2">💰 Limitações de orçamento (se houver)</h3>
-                    <p class="text-red-700 mt-1">Informe restrições financeiras ou faixas de valores que devem ser respeitadas.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">🔒 Restrições de segurança/compliance</h3>
-                    <p class="text-orange-700 mt-1">Mencione normas, certificações ou políticas de segurança que devem ser seguidas.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">⚙️ Preferências de tecnologia (se houver)</h3>
-                    <p class="text-purple-700 mt-1">Indique tecnologias, linguagens ou plataformas preferenciais da empresa.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">📱 Necessidade de acesso móvel/remoto</h3>
-                    <p class="text-green-700 mt-1">Especifique se a solução deve funcionar em dispositivos móveis ou acesso remoto.</p>
-                </div>
+            <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-yellow-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Observações Importantes
+                </h3>
+                <ul class="text-sm space-y-2 text-yellow-800">
+                    <li>• As alíquotas do novo sistema são estimativas (CBS + IBS = 27%)</li>
+                    <li>• IR e CSLL permanecem inalterados nos dois sistemas</li>
+                    <li>• Novo sistema elimina guerra fiscal entre estados</li>
+                    <li>• Crédito integral sobre todos os insumos e investimentos</li>
+                    <li>• Período de transição: 2026-2033</li>
+                    <li>• Alguns produtos terão alíquotas reduzidas ou isenção</li>
+                </ul>
             </div>
         </div>
-    </div>
 
-    <!-- Modal de Dicas para Usuários -->
-    <div id="usuariosModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeUsuariosModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">👥 Como identificar usuários e stakeholders</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">👤 Quem vai usar a solução?</h3>
-                    <p class="text-blue-700 mt-1">Identifique os usuários diretos que irão interagir com a solução no dia a dia.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">🔢 Quantos usuários aproximadamente?</h3>
-                    <p class="text-green-700 mt-1">Estime o número de pessoas que utilizarão a solução (5, 50, 500+ usuários).</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">💻 Perfil técnico dos usuários (básico, intermediário, avançado)</h3>
-                    <p class="text-purple-700 mt-1">Avalie o nível de conhecimento técnico para adequar a interface e complexidade.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">✅ Quem são os responsáveis por aprovar a solução?</h3>
-                    <p class="text-orange-700 mt-1">Identifique gestores ou tomadores de decisão que precisam validar a solução.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-red-200 bg-red-50/50">
-                    <h3 class="font-semibold text-red-800 flex items-center gap-2">ℹ️ Quem pode fornecer informações adicionais?</h3>
-                    <p class="text-red-700 mt-1">Liste pessoas-chave que podem esclarecer dúvidas ou fornecer detalhes técnicos.</p>
-                </div>
+        <!-- Cenários Pré-definidos -->
+        <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Cenários Pré-definidos</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <button
+                    onclick="setCenario(500, 750, '18', '20')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Pequeno</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 500 → Venda: R$ 750</div>
+                    <div class="text-sm text-gray-600">Margem: 50% | ICMS: 18% → 20%</div>
+                </button>
+                
+                <button
+                    onclick="setCenario(2000, 2800, '18', '18')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Médio</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 2.000 → Venda: R$ 2.800</div>
+                    <div class="text-sm text-gray-600">Margem: 40% | ICMS: 18% → 18%</div>
+                </button>
+                
+                <button
+                    onclick="setCenario(10000, 12000, '17', '18')"
+                    class="p-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
+                >
+                    <div class="font-semibold">Varejo Grande</div>
+                    <div class="text-sm text-gray-600">Compra: R$ 10.000 → Venda: R$ 12.000</div>
+                    <div class="text-sm text-gray-600">Margem: 20% | ICMS: 17% → 18%</div>
+                </button>
             </div>
         </div>
-    </div>
-
-    <!-- Modal de Dicas para Recursos -->
-    <div id="recursosModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeRecursosModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">💰 Como identificar recursos disponíveis</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-green-200 bg-green-50/50">
-                    <h3 class="font-semibold text-green-800 flex items-center gap-2">💵 Existe orçamento aprovado? Qual valor?</h3>
-                    <p class="text-green-700 mt-1">Informe se há verba disponível e qual a faixa de valores para investimento.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">👥 Há pessoas do seu departamento disponíveis para colaborar?</h3>
-                    <p class="text-blue-700 mt-1">Identifique membros da equipe que podem dedicar tempo ao projeto.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-purple-200 bg-purple-50/50">
-                    <h3 class="font-semibold text-purple-800 flex items-center gap-2">🤝 Existem fornecedores preferenciais?</h3>
-                    <p class="text-purple-700 mt-1">Mencione se há parceiros ou fornecedores que devem ser considerados.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">📄 Há documentação/dados disponíveis?</h3>
-                    <p class="text-orange-700 mt-1">Liste materiais, manuais, bases de dados ou documentos que podem ajudar.</p>
-                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal de Dicas para Impacto -->
-    <div id="impactoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-        <div class="bg-card w-full max-w-2xl rounded-lg shadow-xl p-6 relative">
-            <button id="closeImpactoModalBtn" class="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-card-foreground mb-4">⚠️ Como avaliar o impacto do não atendimento</h2>
-            <div class="space-y-4 text-sm">
-                <div class="p-4 rounded-md border border-red-200 bg-red-50/50">
-                    <h3 class="font-semibold text-red-800 flex items-center gap-2">❌ O que acontece se esta demanda não for atendida?</h3>
-                    <p class="text-red-700 mt-1">Descreva as consequências diretas da não implementação da solução.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-orange-200 bg-orange-50/50">
-                    <h3 class="font-semibold text-orange-800 flex items-center gap-2">⚠️ Há riscos para o negócio?</h3>
-                    <p class="text-orange-700 mt-1">Identifique riscos operacionais, estratégicos ou de compliance.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-yellow-200 bg-yellow-50/50">
-                    <h3 class="font-semibold text-yellow-800 flex items-center gap-2">💸 Existe impacto financeiro?</h3>
-                    <p class="text-yellow-700 mt-1">Quantifique perdas financeiras, custos extras ou oportunidades perdidas.</p>
-                </div>
-                 <div class="p-4 rounded-md border border-blue-200 bg-blue-50/50">
-                    <h3 class="font-semibold text-blue-800 flex items-center gap-2">🏢 Afeta outros departamentos?</h3>
-                    <p class="text-blue-700 mt-1">Identifique se outros setores serão impactados pela falta da solução.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hidden form for data collection -->
-    <form id="hidden-form" class="hidden">
-        <input type="text" id="solicitante" name="solicitante">
-        <input type="text" id="departamento" name="departamento">
-        <input type="date" id="dataSolicitacao" name="dataSolicitacao">
-        <input type="date" id="prazoDesejado" name="prazoDesejado">
-        <input type="radio" name="prioridade" value="Baixa">
-        <input type="radio" name="prioridade" value="Média">
-        <input type="radio" name="prioridade" value="Alta">
-        <input type="radio" name="prioridade" value="Crítica">
-        <textarea id="contexto" name="contexto"></textarea>
-        <textarea id="objetivo" name="objetivo"></textarea>
-        <textarea id="reqFuncionais" name="reqFuncionais"></textarea>
-        <textarea id="reqTecnicos" name="reqTecnicos"></textarea>
-        <textarea id="usuarios" name="usuarios"></textarea>
-        <textarea id="recursos" name="recursos"></textarea>
-        <textarea id="impacto" name="impacto"></textarea>
-    </form>
-
+            
+      <!-- Tabela SIMTAX - Alíquotas ICMS -->
+      <div class="w-full max-w-6xl mx-auto mt-8 px-4">
+          <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">Tabela SIMTAX - Alíquotas Interestaduais de ICMS</h1>
+          <div class="bg-white rounded-lg shadow-lg p-6 text-center mx-auto">
+              <img src="icms-2025-interestadual-1.png" alt="Tabela SIMTAX - Alíquotas Interestaduais de ICMS 2025" class="max-w-full h-auto rounded-lg border border-gray-200 mx-auto">
+          </div>
+      </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const mainGrid = document.getElementById('main-grid');
-            const chatColumn = document.getElementById('chat-column');
-            const previewColumn = document.getElementById('preview-column');
-            const chatContainer = document.getElementById('chat-container');
-            const inputContainer = document.getElementById('input-container');
-            const typingIndicator = document.getElementById('typing-indicator');
-            const hiddenForm = document.getElementById('hidden-form');
-            const sendEmailButton = document.getElementById('sendEmailButton');
-            const priorityModal = document.getElementById('priorityModal');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            let currentStep = 0;
-            let isProcessing = false;
-
-            const questions = [
-                { id: 'solicitante', question: 'Olá! Para começar, qual é o seu nome completo?', type: 'text', placeholder: 'Seu nome aqui...' },
-                { id: 'departamento', question: 'E de qual departamento você é?', type: 'text', placeholder: 'Ex: Vendas, Marketing...' },
-                { id: 'contexto', question: 'Descreva a sua dor atual, para pensarmos juntos em uma solução:', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'objetivo', question: 'O que você espera alcançar com a solução e como medirá o sucesso?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'reqFuncionais', question: 'O que a solução precisa fazer?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'reqTecnicos', question: 'Existem requisitos técnicos ou restrições?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'usuarios', question: 'Quem são os usuários e as partes interessadas?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'recursos', question: 'Quais recursos já estão disponíveis?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'impacto', question: 'Qual o impacto se a demanda não for atendida?', type: 'textarea', placeholder: 'Clique no ícone de informação ao lado para ver dicas de como responder esta pergunta.', hasInfo: true },
-                { id: 'prazoDesejado', question: 'Qual o prazo desejado para a conclusão?', type: 'date' },
-                { id: 'prioridade', question: 'Para finalizar, como você classificaria a prioridade desta demanda?', type: 'radio', options: ['Baixa', 'Média', 'Alta', 'Crítica'], hasInfo: true }
-            ];
-
-            function scrollToBottom() {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-                // Força o scroll em caso de layouts dinâmicos
-                requestAnimationFrame(() => {
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                });
-            }
-
-            function addBotMessage(message, hasInfo = false, infoType = 'priority') {
-                const messageEl = document.createElement('div');
-                messageEl.classList.add('flex', 'items-start', 'chat-bubble-bot');
-
-                let infoButtonHTML = '';
-                if (hasInfo) {
-                    let buttonClass = 'priority-info-btn';
-                    if (infoType === 'context') buttonClass = 'context-info-btn';
-                    else if (infoType === 'objetivo') buttonClass = 'objetivo-info-btn';
-                    else if (infoType === 'reqFuncionais') buttonClass = 'reqFuncionais-info-btn';
-                    else if (infoType === 'reqTecnicos') buttonClass = 'reqTecnicos-info-btn';
-                    else if (infoType === 'usuarios') buttonClass = 'usuarios-info-btn';
-                    else if (infoType === 'recursos') buttonClass = 'recursos-info-btn';
-                    else if (infoType === 'impacto') buttonClass = 'impacto-info-btn';
-                    
-                    infoButtonHTML = `
-                        <button type="button" class="${buttonClass} text-muted-foreground hover:text-primary ml-2 flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                            </svg>
-                        </button>
-                    `;
+        // Alíquotas por regime tributário
+        const aliquotasPorRegime = {
+            lucro_real: {
+                atual: {
+                    pisConfins: 0.0925, // 9,25% (3,65% + 5,6%)
+                    irpj: 0.15,
+                    csll: 0.09
+                },
+                novo: {
+                    total: 0.27, // 27% total (CBS + IBS)
+                    irpj: 0.15,
+                    csll: 0.09
                 }
-
-                messageEl.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-muted flex items-center justify-center mr-3 flex-shrink-0">
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-muted-foreground"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
-                     </div>
-                     <div class="bg-muted text-card-foreground rounded-lg p-3 max-w-xs flex items-center">
-                        <span>${message}</span>
-                        ${infoButtonHTML}
-                    </div>
-                `;
-                chatContainer.appendChild(messageEl);
-                // Garante que o scroll aconteça após o elemento ser totalmente renderizado
-                requestAnimationFrame(() => {
-                    setTimeout(scrollToBottom, 50);
-                });
-            }
-
-            function addUserMessage(message) {
-                 const messageEl = document.createElement('div');
-                messageEl.classList.add('flex', 'justify-end', 'chat-bubble-user');
-                messageEl.innerHTML = `
-                    <div class="bg-primary text-primary-foreground rounded-lg p-3 max-w-xs">
-                        ${message}
-                    </div>
-                `;
-                chatContainer.appendChild(messageEl);
-                // Garante que o scroll aconteça após o elemento ser totalmente renderizado
-                requestAnimationFrame(() => {
-                    setTimeout(scrollToBottom, 50);
-                });
-            }
-
-            function askQuestion() {
-                isProcessing = false;
-                if (currentStep >= questions.length) {
-                    addBotMessage("Obrigado! Todas as informações foram registradas. O resumo da sua solicitação está pronto para ser enviado.");
-                    inputContainer.innerHTML = '';
-                    typingIndicator.classList.add('hidden');
-                    setTimeout(() => {
-                        chatColumn.classList.add('hidden');
-                        previewColumn.classList.remove('hidden');
-                    }, 2000);
-                    return;
+            },
+            lucro_presumido: {
+                atual: {
+                    pisConfins: 0.0365, // 3,65% (presumido)
+                    irpj: 0.015, // 1,5% sobre faturamento
+                    csll: 0.01, // 1% sobre faturamento
+                    icmsCredito: false // Sem direito a crédito no presumido
+                },
+                novo: {
+                    total: 0.27, // 27% total (CBS + IBS)
+                    irpj: 0.015, // Mantém 1,5%
+                    csll: 0.01 // Mantém 1%
                 }
-                
-                const step = questions[currentStep];
-                let infoType = 'priority';
-                if (step.id === 'contexto') infoType = 'context';
-                else if (step.id === 'objetivo') infoType = 'objetivo';
-                else if (step.id === 'reqFuncionais') infoType = 'reqFuncionais';
-                else if (step.id === 'reqTecnicos') infoType = 'reqTecnicos';
-                else if (step.id === 'usuarios') infoType = 'usuarios';
-                else if (step.id === 'recursos') infoType = 'recursos';
-                else if (step.id === 'impacto') infoType = 'impacto';
-                
-                // Personaliza a pergunta do departamento com o nome do usuário
-                let questionText = step.question;
-                if (step.id === 'departamento') {
-                    const nomeUsuario = hiddenForm.elements['solicitante'].value;
-                    if (nomeUsuario) {
-                        const primeiroNome = nomeUsuario.split(' ')[0];
-                        questionText = `E você, ${primeiroNome}, é de qual departamento?`;
-                    }
-                }
-                
-                addBotMessage(questionText, step.hasInfo, infoType);
-                inputContainer.innerHTML = '';
-                
-                let inputEl;
-                if (step.type === 'textarea') {
-                    inputEl = document.createElement('textarea');
-                    inputEl.rows = 4;
-                    inputEl.className = 'mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-primary focus:ring focus:ring-ring focus:ring-opacity-50';
-                    inputEl.placeholder = step.placeholder || '';
-                    inputContainer.appendChild(inputEl);
-
-                    const submitBtn = document.createElement('button');
-                    submitBtn.textContent = 'Enviar';
-                    submitBtn.className = 'mt-2 w-full bg-primary text-primary-foreground font-semibold py-2 px-4 rounded-lg shadow-sm hover:opacity-90';
-                    submitBtn.onclick = () => handleAnswer(inputEl.value);
-                    inputContainer.appendChild(submitBtn);
-
-                    inputEl.focus();
-                } else if (step.type === 'radio') {
-                     const radioContainer = document.createElement('div');
-                    radioContainer.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3';
-                    
-                     const colors = { 'Baixa': 'green', 'Média': 'yellow', 'Alta': 'orange', 'Crítica': 'red' };
-
-                    step.options.forEach(option => {
-                        const label = document.createElement('label');
-                        label.className = `cursor-pointer flex items-center justify-center gap-2 p-3 border border-input rounded-md text-center hover:bg-accent transition-all`;
-                        label.innerHTML = `
-                            <input type="radio" name="${step.id}" value="${option}" class="sr-only">
-                            <span class="w-3 h-3 bg-${colors[option]}-500 rounded-full"></span>
-                            <span class="font-medium text-sm text-card-foreground">${option}</span>
-                        `;
-                        label.onclick = () => handleAnswer(option, true);
-                        radioContainer.appendChild(label);
-                    });
-                    inputContainer.appendChild(radioContainer);
-                } else {
-                    inputEl = document.createElement('input');
-                    inputEl.type = step.type;
-                    inputEl.className = 'mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-primary focus:ring focus:ring-ring focus:ring-opacity-50';
-                    inputEl.placeholder = step.placeholder || '';
-                    
-                    // Configurações específicas para campos de data
-                    if (step.type === 'date') {
-                        inputEl.style.minHeight = '48px';
-                        inputEl.style.fontSize = '16px';
-                        inputEl.style.padding = '12px';
-                        inputEl.style.display = 'block';
-                        inputEl.style.width = '100%';
-                        inputEl.style.visibility = 'visible';
-                        inputEl.style.opacity = '1';
-                        inputEl.style.backgroundColor = 'var(--background)';
-                        inputEl.style.border = '1px solid var(--border)';
-                        inputEl.style.color = 'var(--foreground)';
-                        
-                        // Preenche automaticamente com 15 dias à frente
-                        const today = new Date();
-                        const futureDate = new Date(today);
-                        futureDate.setDate(today.getDate() + 15);
-                        
-                        // Formata a data para o formato YYYY-MM-DD
-                        const year = futureDate.getFullYear();
-                        const month = String(futureDate.getMonth() + 1).padStart(2, '0');
-                        const day = String(futureDate.getDate()).padStart(2, '0');
-                        inputEl.value = `${year}-${month}-${day}`;
-                    }
-                    
-                    inputContainer.appendChild(inputEl);
-
-                    const submitBtn = document.createElement('button');
-                    submitBtn.textContent = 'Enviar';
-                    submitBtn.className = 'mt-2 w-full bg-primary text-primary-foreground font-semibold py-2 px-4 rounded-lg shadow-sm hover:opacity-90';
-                    submitBtn.onclick = () => handleAnswer(inputEl.value);
-                    inputContainer.appendChild(submitBtn);
-
-                    // Para campos de data, não fazer focus automático no mobile para evitar problemas
-                    if (step.type !== 'date' || window.innerWidth > 640) {
-                        inputEl.focus();
-                    }
-                    
-                    inputEl.onkeydown = (e) => {
-                        if (e.key === 'Enter') {
-                            handleAnswer(e.target.value);
-                        }
-                    };
+            },
+            simples_nacional: {
+                atual: {
+                    aliquotaUnica: 0.06, // 6% média (varia por faixa)
+                    semCredito: true // Sem direito a crédito
+                },
+                novo: {
+                    total: 0.27, // 27% total (CBS + IBS)
+                    // No Simples, IR e CSLL estão inclusos na alíquota única
+                    irpjInclusoNovo: true,
+                    csllInclusoNovo: true
                 }
             }
+        };
 
-            function handleAnswer(value, isRadio = false) {
-                if (isProcessing) return;
-                isProcessing = true;
+        // Funções auxiliares para obter alíquotas do regime selecionado
+        function getAliquotasAtuais() {
+            const regime = document.getElementById('regimeTributario').value;
+            return aliquotasPorRegime[regime].atual;
+        }
 
-                if (!value || value.trim() === '') {
-                    alert("Por favor, forneça uma resposta.");
-                    isProcessing = false;
-                    return;
-                }
-                const step = questions[currentStep];
-                const hiddenInput = hiddenForm.elements[step.id];
+        function getNovasAliquotas() {
+            const regime = document.getElementById('regimeTributario').value;
+            return aliquotasPorRegime[regime].novo;
+        }
 
-                if (isRadio) {
-                    addUserMessage(value);
-                     const radioToSelect = Array.from(hiddenInput).find(r => r.value === value);
-                    if (radioToSelect) radioToSelect.checked = true;
-                } else {
-                     addUserMessage(value);
-                     hiddenInput.value = value;
-                }
-               
-                updatePreview();
-                currentStep++;
-                
-                inputContainer.innerHTML = '';
-                typingIndicator.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    typingIndicator.classList.add('hidden');
-                    askQuestion();
-                }, 1500);
+        // Função para formatar moeda
+        function formatMoney(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        // Função para formatar porcentagem
+        function formatPercent(value) {
+            return `${value.toFixed(2)}%`;
+        }
+
+        // Função para obter ícone de diferença
+        function getDiferencaIcon(valor) {
+            if (Math.abs(valor) < 0.01) {
+                return '<svg class="icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>';
             }
+            return valor > 0 
+                ? '<svg class="icon text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>'
+                : '<svg class="icon text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>';
+        }
 
-            function formatDate(dateString) {
-                if (!dateString) return '';
-                const [year, month, day] = dateString.split('-');
-                return `${day}/${month}/${year}`;
-            }
+        // Função para obter cor da diferença
+        function getDiferencaColor(valor) {
+            if (Math.abs(valor) < 0.01) return 'text-gray-500';
+            return valor > 0 ? 'text-red-500' : 'text-green-500';
+        }
 
-            function updatePreview() {
-                const formData = new FormData(hiddenForm);
-                document.getElementById('previewSolicitante').textContent = formData.get('solicitante');
-                document.getElementById('previewDepartamento').textContent = formData.get('departamento');
-                document.getElementById('previewDataSolicitacao').textContent = formatDate(hiddenForm.elements['dataSolicitacao'].value);
-                document.getElementById('previewPrazoDesejado').textContent = formatDate(formData.get('prazoDesejado'));
-                const priority = formData.get('prioridade');
-                const previewPriority = document.getElementById('previewPrioridade');
-                previewPriority.textContent = priority || '';
-                previewPriority.classList.remove('text-green-600', 'text-yellow-600', 'text-orange-600', 'text-red-600');
-                switch(priority) {
-                    case 'Baixa': previewPriority.classList.add('text-green-600'); break;
-                    case 'Média': previewPriority.classList.add('text-yellow-600'); break;
-                    case 'Alta': previewPriority.classList.add('text-orange-600'); break;
-                    case 'Crítica': previewPriority.classList.add('text-red-600'); break;
-                }
-                document.getElementById('previewContexto').textContent = formData.get('contexto');
-                document.getElementById('previewObjetivo').textContent = formData.get('objetivo');
-                document.getElementById('previewReqFuncionais').textContent = formData.get('reqFuncionais');
-                document.getElementById('previewReqTecnicos').textContent = formData.get('reqTecnicos');
-                document.getElementById('previewUsuarios').textContent = formData.get('usuarios');
-                document.getElementById('previewRecursos').textContent = formData.get('recursos');
-                document.getElementById('previewImpacto').textContent = formData.get('impacto');
-            }
+        // Função para calcular sistema atual
+        function calcularSistemaAtual() {
+            const regime = document.getElementById('regimeTributario').value;
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            const icmsOrigemDecimal = (parseFloat(document.getElementById('icmsOrigem').value) || 0) / 100;
+            const icmsDestinoDecimal = (parseFloat(document.getElementById('icmsDestino').value) || 0) / 100;
+            const aliquotasAtuais = getAliquotasAtuais();
             
+            if (regime === 'simples_nacional') {
+                // Simples Nacional - Alíquota única sobre faturamento
+                const tributoSimples = valorVenda * aliquotasAtuais.aliquotaUnica;
+                const icmsRecolher = Math.max(0, (valorVenda * icmsDestinoDecimal) - (valorCompra * icmsOrigemDecimal));
+                const totalRecolher = tributoSimples + icmsRecolher;
+                const lucroLiquido = valorVenda - valorCompra - totalRecolher;
 
-            // Initial setup
-            const today = new Date().toISOString().split('T')[0];
-            hiddenForm.elements['dataSolicitacao'].value = today;
-            updatePreview();
-
-            // Start chat
-            askQuestion();
-
-            // Função para recomeçar o formulário
-            function restartForm() {
-                // Reset todas as variáveis
-                currentStep = 0;
-                isProcessing = false;
-                
-                // Limpa o formulário oculto
-                hiddenForm.reset();
-                
-                // Limpa o chat
-                chatContainer.innerHTML = '';
-                
-                // Limpa o input container
-                inputContainer.innerHTML = '';
-                
-                // Esconde o typing indicator
-                typingIndicator.classList.add('hidden');
-                
-                // Volta para a tela do chat
-                previewColumn.classList.add('hidden');
-                chatColumn.classList.remove('hidden');
-                
-                // Atualiza a data atual
-                const today = new Date().toISOString().split('T')[0];
-                hiddenForm.elements['dataSolicitacao'].value = today;
-                
-                // Atualiza o preview
-                updatePreview();
-                
-                // Inicia o chat novamente
-                askQuestion();
-            }
-
-            // Event listener para o botão de recomeçar
-            document.getElementById('restartButton').addEventListener('click', restartForm);
-
-            // Função para criar tarefa no Asana
-            async function createAsanaTask() {
-                const formData = new FormData(hiddenForm);
-                const today = new Date().toISOString().split('T')[0];
-                
-                // Formata o prazo desejado para o formato ISO
-                const prazoDesejado = formData.get('prazoDesejado');
-                const dueOn = prazoDesejado ? prazoDesejado : null;
-                
-                // Monta a descrição da tarefa
-                const taskDescription = `
-NOVA SOLICITAÇÃO DE DEMANDA DE TI
-
-1. IDENTIFICAÇÃO DA DEMANDA
-Solicitante: ${formData.get('solicitante')}
-Departamento: ${formData.get('departamento')}
-Data da Solicitação: ${formatDate(today)}
-Prazo Desejado: ${formatDate(prazoDesejado)}
-Prioridade: ${formData.get('prioridade')}
-
-2. CONTEXTO E DOR
-${formData.get('contexto')}
-
-3. OBJETIVO E RESULTADO ESPERADO
-${formData.get('objetivo')}
-
-4. REQUISITOS FUNCIONAIS
-${formData.get('reqFuncionais')}
-
-5. REQUISITOS TÉCNICOS E RESTRIÇÕES
-${formData.get('reqTecnicos')}
-
-6. USUÁRIOS E STAKEHOLDERS
-${formData.get('usuarios')}
-
-7. RECURSOS DISPONÍVEIS
-${formData.get('recursos')}
-
-8. IMPACTO DO NÃO ATENDIMENTO
-${formData.get('impacto')}
-                `.trim();
-
-                const taskData = {
-                    data: {
-                        name: `Nova Solicitação de TI - ${formData.get('solicitante')}`,
-                        notes: taskDescription,
-                        projects: ["1211417468444116"], // Project ID fornecido
-                        due_on: dueOn,
-                        custom_fields: {
-                            // Você pode adicionar campos personalizados aqui se necessário
-                        }
+                return {
+                    compra: {
+                        creditoPisCofins: 0,
+                        creditoIcms: 0,
+                        totalCreditos: 0
+                    },
+                    venda: {
+                        debitoPisCofins: 0,
+                        debitoIcms: valorVenda * icmsDestinoDecimal,
+                        debitoSimples: tributoSimples,
+                        totalDebitos: tributoSimples + (valorVenda * icmsDestinoDecimal)
+                    },
+                    recolhimento: {
+                        simples: tributoSimples,
+                        icms: icmsRecolher,
+                        total: totalRecolher
+                    },
+                    resultado: {
+                        lucroAntesTributos: valorVenda - valorCompra - totalRecolher,
+                        lucroLiquido
+                    },
+                    resumo: {
+                        tributosConsumo: totalRecolher,
+                        tributosLucro: 0, // Incluído no Simples
+                        totalTributos: totalRecolher,
+                        aliquotaEfetiva: totalRecolher / valorVenda * 100
                     }
                 };
+            } else if (regime === 'lucro_presumido') {
+                // Lucro Presumido - PIS/COFINS sobre faturamento, IR/CSLL sobre faturamento
+                const creditoPisCofinCompra = aliquotasAtuais.icmsCredito ? valorCompra * aliquotasAtuais.pisConfins : 0;
+                const creditoIcmsCompra = valorCompra * icmsOrigemDecimal;
+                const totalCreditosCompra = creditoPisCofinCompra + creditoIcmsCompra;
 
-                try {
-                    const response = await fetch('https://app.asana.com/api/1.0/tasks', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'Bearer 2/1143982264182678/1211417468387463:c67e022d15d2ec650ae50e9cc18da980',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(taskData)
-                    });
+                const debitoPisCofinVenda = valorVenda * aliquotasAtuais.pisConfins;
+                const debitoIcmsVenda = valorVenda * icmsDestinoDecimal;
+                const totalDebitosVenda = debitoPisCofinVenda + debitoIcmsVenda;
 
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Tarefa criada no Asana:', result);
-                        return { success: true, task: result.data };
-                    } else {
-                        const error = await response.text();
-                        console.error('Erro ao criar tarefa no Asana:', error);
-                        return { success: false, error: error };
-                    }
-                } catch (error) {
-                    console.error('Erro de rede ao criar tarefa no Asana:', error);
-                    return { success: false, error: error.message };
-                }
-            }
-
-            sendEmailButton.addEventListener('click', async function() {
-                // Desabilita o botão temporariamente
-                sendEmailButton.disabled = true;
-                sendEmailButton.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Criando tarefa...
-                `;
-
-                try {
-                    // Cria a tarefa no Asana
-                    const asanaResult = await createAsanaTask();
-                    
-                    if (asanaResult.success) {
-                        // Atualiza o botão para sucesso
-                        sendEmailButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>Tarefa criada com sucesso!</span>
-                        `;
-                        
-                    } else {
-                        // Se houve erro, mostra mensagem de erro
-                        sendEmailButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                            </svg>
-                            <span>Erro ao criar tarefa</span>
-                        `;
-                    }
-                    
-                } catch (error) {
-                    console.error('Erro geral:', error);
-                    
-                    // Em caso de erro, mostra mensagem de erro
-                    sendEmailButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                        </svg>
-                        <span>Erro ao criar tarefa</span>
-                    `;
-                }
+                const pisCofinRecolher = Math.max(0, debitoPisCofinVenda - creditoPisCofinCompra);
+                const icmsRecolher = Math.max(0, debitoIcmsVenda - creditoIcmsCompra);
                 
-                // Reabilita o botão após um tempo
-                setTimeout(() => {
-                    sendEmailButton.disabled = false;
-                    sendEmailButton.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>Criar Tarefa no Asana</span>
-                    `;
-                }, 3000);
-            });
+                // IR e CSLL sobre faturamento
+                const irpjDevido = valorVenda * aliquotasAtuais.irpj;
+                const csllDevido = valorVenda * aliquotasAtuais.csll;
+                const totalIrCsll = irpjDevido + csllDevido;
+                
+                const totalRecolher = pisCofinRecolher + icmsRecolher;
+                const lucroLiquido = valorVenda - valorCompra - totalRecolher - totalIrCsll;
 
-            // Lógica dos Modais
-            const contextModal = document.getElementById('contextModal');
-            const closeContextModalBtn = document.getElementById('closeContextModalBtn');
-            const objetivoModal = document.getElementById('objetivoModal');
-            const closeObjetivoModalBtn = document.getElementById('closeObjetivoModalBtn');
-            const reqFuncionaisModal = document.getElementById('reqFuncionaisModal');
-            const closeReqFuncionaisModalBtn = document.getElementById('closeReqFuncionaisModalBtn');
-            const reqTecnicosModal = document.getElementById('reqTecnicosModal');
-            const closeReqTecnicosModalBtn = document.getElementById('closeReqTecnicosModalBtn');
-            const usuariosModal = document.getElementById('usuariosModal');
-            const closeUsuariosModalBtn = document.getElementById('closeUsuariosModalBtn');
-            const recursosModal = document.getElementById('recursosModal');
-            const closeRecursosModalBtn = document.getElementById('closeRecursosModalBtn');
-            const impactoModal = document.getElementById('impactoModal');
-            const closeImpactoModalBtn = document.getElementById('closeImpactoModalBtn');
+                return {
+                    compra: {
+                        creditoPisCofins: creditoPisCofinCompra,
+                        creditoIcms: creditoIcmsCompra,
+                        totalCreditos: totalCreditosCompra
+                    },
+                    venda: {
+                        debitoPisCofins: debitoPisCofinVenda,
+                        debitoIcms: debitoIcmsVenda,
+                        totalDebitos: totalDebitosVenda
+                    },
+                    recolhimento: {
+                        pisCofins: pisCofinRecolher,
+                        icms: icmsRecolher,
+                        total: totalRecolher
+                    },
+                    resultado: {
+                        lucroAntesTributos: valorVenda - valorCompra - totalRecolher,
+                        irpj: irpjDevido,
+                        csll: csllDevido,
+                        totalIrCsll,
+                        lucroLiquido
+                    },
+                    resumo: {
+                        tributosConsumo: totalRecolher,
+                        tributosLucro: totalIrCsll,
+                        totalTributos: totalRecolher + totalIrCsll,
+                        aliquotaEfetiva: (totalRecolher + totalIrCsll) / valorVenda * 100
+                    }
+                };
+            } else {
+                // Lucro Real - Lógica original
+                const creditoPisCofinCompra = valorCompra * aliquotasAtuais.pisConfins;
+                const creditoIcmsCompra = valorCompra * icmsOrigemDecimal;
+                const totalCreditosCompra = creditoPisCofinCompra + creditoIcmsCompra;
 
-            chatContainer.addEventListener('click', (e) => {
-                const infoBtn = e.target.closest('.priority-info-btn');
-                if (infoBtn) {
-                    priorityModal.classList.remove('hidden');
-                    priorityModal.classList.add('flex');
-                }
+                const debitoPisCofinVenda = valorVenda * aliquotasAtuais.pisConfins;
+                const debitoIcmsVenda = valorVenda * icmsDestinoDecimal;
+                const totalDebitosVenda = debitoPisCofinVenda + debitoIcmsVenda;
 
-                const contextInfoBtn = e.target.closest('.context-info-btn');
-                if (contextInfoBtn) {
-                    contextModal.classList.remove('hidden');
-                    contextModal.classList.add('flex');
-                }
+                const pisCofinRecolher = Math.max(0, debitoPisCofinVenda - creditoPisCofinCompra);
+                const icmsRecolher = Math.max(0, debitoIcmsVenda - creditoIcmsCompra);
+                const totalRecolher = pisCofinRecolher + icmsRecolher;
 
-                const objetivoInfoBtn = e.target.closest('.objetivo-info-btn');
-                if (objetivoInfoBtn) {
-                    objetivoModal.classList.remove('hidden');
-                    objetivoModal.classList.add('flex');
-                }
+                const lucroAntesTributos = valorVenda - valorCompra - totalRecolher;
+                const irpjDevido = lucroAntesTributos * aliquotasAtuais.irpj;
+                const csllDevido = lucroAntesTributos * aliquotasAtuais.csll;
+                const totalIrCsll = irpjDevido + csllDevido;
+                const lucroLiquido = lucroAntesTributos - totalIrCsll;
 
-                const reqFuncionaisInfoBtn = e.target.closest('.reqFuncionais-info-btn');
-                if (reqFuncionaisInfoBtn) {
-                    reqFuncionaisModal.classList.remove('hidden');
-                    reqFuncionaisModal.classList.add('flex');
-                }
+                return {
+                    compra: {
+                        creditoPisCofins: creditoPisCofinCompra,
+                        creditoIcms: creditoIcmsCompra,
+                        totalCreditos: totalCreditosCompra
+                    },
+                    venda: {
+                        debitoPisCofins: debitoPisCofinVenda,
+                        debitoIcms: debitoIcmsVenda,
+                        totalDebitos: totalDebitosVenda
+                    },
+                    recolhimento: {
+                        pisCofins: pisCofinRecolher,
+                        icms: icmsRecolher,
+                        total: totalRecolher
+                    },
+                    resultado: {
+                        lucroAntesTributos,
+                        irpj: irpjDevido,
+                        csll: csllDevido,
+                        totalIrCsll,
+                        lucroLiquido
+                    },
+                    resumo: {
+                        tributosConsumo: totalRecolher,
+                        tributosLucro: totalIrCsll,
+                        totalTributos: totalRecolher + totalIrCsll,
+                        aliquotaEfetiva: (totalRecolher + totalIrCsll) / valorVenda * 100
+                    }
+                };
+            }
+        }
 
-                const reqTecnicosInfoBtn = e.target.closest('.reqTecnicos-info-btn');
-                if (reqTecnicosInfoBtn) {
-                    reqTecnicosModal.classList.remove('hidden');
-                    reqTecnicosModal.classList.add('flex');
-                }
+        // Função para calcular novo sistema
+        function calcularNovoSistema() {
+            const regime = document.getElementById('regimeTributario').value;
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            const novasAliquotas = getNovasAliquotas();
+            
+            // Compra
+            const creditoCbsIbsCompra = valorCompra * novasAliquotas.total;
 
-                const usuariosInfoBtn = e.target.closest('.usuarios-info-btn');
-                if (usuariosInfoBtn) {
-                    usuariosModal.classList.remove('hidden');
-                    usuariosModal.classList.add('flex');
-                }
+            // Venda  
+            const debitoCbsIbsVenda = valorVenda * novasAliquotas.total;
 
-                const recursosInfoBtn = e.target.closest('.recursos-info-btn');
-                if (recursosInfoBtn) {
-                    recursosModal.classList.remove('hidden');
-                    recursosModal.classList.add('flex');
-                }
+            // A recolher
+            const cbsIbsRecolher = Math.max(0, debitoCbsIbsVenda - creditoCbsIbsCompra);
 
-                const impactoInfoBtn = e.target.closest('.impacto-info-btn');
-                if (impactoInfoBtn) {
-                    impactoModal.classList.remove('hidden');
-                    impactoModal.classList.add('flex');
-                }
+            if (regime === 'simples_nacional') {
+                // No novo sistema, Simples Nacional seria substituído pelo CBS+IBS
+                // IR e CSLL estariam inclusos no novo sistema
+                const lucroLiquido = valorVenda - valorCompra - cbsIbsRecolher;
+
+                return {
+                    compra: {
+                        creditoCbsIbs: creditoCbsIbsCompra,
+                        totalCreditos: creditoCbsIbsCompra
+                    },
+                    venda: {
+                        debitoCbsIbs: debitoCbsIbsVenda,
+                        totalDebitos: debitoCbsIbsVenda
+                    },
+                    recolhimento: {
+                        cbsIbs: cbsIbsRecolher,
+                        total: cbsIbsRecolher
+                    },
+                    resultado: {
+                        lucroAntesTributos: valorVenda - valorCompra - cbsIbsRecolher,
+                        lucroLiquido
+                    },
+                    resumo: {
+                        tributosConsumo: cbsIbsRecolher,
+                        tributosLucro: 0, // Incluído no CBS+IBS
+                        totalTributos: cbsIbsRecolher,
+                        aliquotaEfetiva: cbsIbsRecolher / valorVenda * 100
+                    }
+                };
+            } else {
+                // Lucro Real e Presumido mantêm IR/CSLL separados
+                const lucroAntesTributos = valorVenda - valorCompra - cbsIbsRecolher;
+                const irpjDevido = regime === 'lucro_presumido' 
+                    ? valorVenda * novasAliquotas.irpj 
+                    : lucroAntesTributos * novasAliquotas.irpj;
+                const csllDevido = regime === 'lucro_presumido' 
+                    ? valorVenda * novasAliquotas.csll 
+                    : lucroAntesTributos * novasAliquotas.csll;
+                const totalIrCsll = irpjDevido + csllDevido;
+                const lucroLiquido = lucroAntesTributos - totalIrCsll;
+
+                return {
+                    compra: {
+                        creditoCbsIbs: creditoCbsIbsCompra,
+                        totalCreditos: creditoCbsIbsCompra
+                    },
+                    venda: {
+                        debitoCbsIbs: debitoCbsIbsVenda,
+                        totalDebitos: debitoCbsIbsVenda
+                    },
+                    recolhimento: {
+                        cbsIbs: cbsIbsRecolher,
+                        total: cbsIbsRecolher
+                    },
+                    resultado: {
+                        lucroAntesTributos,
+                        irpj: irpjDevido,
+                        csll: csllDevido,
+                        totalIrCsll,
+                        lucroLiquido
+                    },
+                    resumo: {
+                        tributosConsumo: cbsIbsRecolher,
+                        tributosLucro: totalIrCsll,
+                        totalTributos: cbsIbsRecolher + totalIrCsll,
+                        aliquotaEfetiva: (cbsIbsRecolher + totalIrCsll) / valorVenda * 100
+                    }
+                };
+            }
+        }
+
+        // Função para atualizar os cálculos
+        function atualizarCalculos() {
+            const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
+            const icmsOrigem = parseFloat(document.getElementById('icmsOrigem').value) || 0;
+            const icmsDestino = parseFloat(document.getElementById('icmsDestino').value) || 0;
+
+            // Atualizar margem
+            const margem = valorCompra > 0 ? (valorVenda - valorCompra) / valorCompra * 100 : 0;
+            document.getElementById('margem').textContent = formatPercent(margem);
+
+            // Calcular sistemas
+            const sistemaAtual = calcularSistemaAtual();
+            const novoSistema = calcularNovoSistema();
+            
+            const diferenca = {
+                tributosConsumo: novoSistema.resumo.tributosConsumo - sistemaAtual.resumo.tributosConsumo,
+                tributosLucro: novoSistema.resumo.tributosLucro - sistemaAtual.resumo.tributosLucro,
+                totalTributos: novoSistema.resumo.totalTributos - sistemaAtual.resumo.totalTributos,
+                lucroLiquido: novoSistema.resultado.lucroLiquido - sistemaAtual.resultado.lucroLiquido,
+                aliquotaEfetiva: novoSistema.resumo.aliquotaEfetiva - sistemaAtual.resumo.aliquotaEfetiva
+            };
+
+            // Atualizar Sistema Atual
+            document.getElementById('atual-credito-piscofins').textContent = formatMoney(sistemaAtual.compra.creditoPisCofins);
+            document.getElementById('atual-credito-icms').textContent = formatMoney(sistemaAtual.compra.creditoIcms);
+            document.getElementById('atual-total-creditos').textContent = formatMoney(sistemaAtual.compra.totalCreditos);
+            document.getElementById('atual-debito-piscofins').textContent = formatMoney(sistemaAtual.venda.debitoPisCofins);
+            document.getElementById('atual-debito-icms').textContent = formatMoney(sistemaAtual.venda.debitoIcms);
+            document.getElementById('atual-total-debitos').textContent = formatMoney(sistemaAtual.venda.totalDebitos);
+            document.getElementById('atual-recolher-piscofins').textContent = formatMoney(sistemaAtual.recolhimento.pisCofins);
+            document.getElementById('atual-recolher-icms').textContent = formatMoney(sistemaAtual.recolhimento.icms);
+            document.getElementById('atual-total-recolher').textContent = formatMoney(sistemaAtual.recolhimento.total);
+            document.getElementById('atual-icms-origem-label').textContent = formatPercent(icmsOrigem);
+            document.getElementById('atual-icms-destino-label').textContent = formatPercent(icmsDestino);
+
+            // Atualizar Novo Sistema
+            document.getElementById('novo-credito-cbsibs').textContent = formatMoney(novoSistema.compra.creditoCbsIbs);
+            document.getElementById('novo-total-creditos').textContent = formatMoney(novoSistema.compra.totalCreditos);
+            document.getElementById('novo-debito-cbsibs').textContent = formatMoney(novoSistema.venda.debitoCbsIbs);
+            document.getElementById('novo-total-debitos').textContent = formatMoney(novoSistema.venda.totalDebitos);
+            document.getElementById('novo-recolher-cbsibs').textContent = formatMoney(novoSistema.recolhimento.cbsIbs);
+            document.getElementById('novo-total-recolher').textContent = formatMoney(novoSistema.recolhimento.total);
+
+            // Atualizar Diferenças
+            document.getElementById('icon-tributos-consumo').innerHTML = getDiferencaIcon(diferenca.tributosConsumo);
+            document.getElementById('diferenca-tributos-consumo').textContent = 
+                (diferenca.tributosConsumo >= 0 ? '+' : '') + formatMoney(diferenca.tributosConsumo);
+            document.getElementById('diferenca-tributos-consumo').className = 
+                `text-lg font-bold ${getDiferencaColor(diferenca.tributosConsumo)}`;
+            document.getElementById('percentual-tributos-consumo').textContent = 
+                sistemaAtual.resumo.tributosConsumo > 0 ? 
+                formatPercent((diferenca.tributosConsumo / sistemaAtual.resumo.tributosConsumo) * 100) + ' vs. sistema atual' : 
+                'N/A';
+
+            document.getElementById('icon-lucro-liquido').innerHTML = getDiferencaIcon(-diferenca.lucroLiquido);
+            document.getElementById('diferenca-lucro-liquido').textContent = 
+                (diferenca.lucroLiquido >= 0 ? '+' : '') + formatMoney(diferenca.lucroLiquido);
+            document.getElementById('diferenca-lucro-liquido').className = 
+                `text-lg font-bold ${getDiferencaColor(-diferenca.lucroLiquido)}`;
+            document.getElementById('percentual-lucro-liquido').textContent = 
+                sistemaAtual.resultado.lucroLiquido > 0 ? 
+                formatPercent((diferenca.lucroLiquido / sistemaAtual.resultado.lucroLiquido) * 100) + ' vs. sistema atual' : 
+                'N/A';
+
+            document.getElementById('aliquota-atual').textContent = formatPercent(sistemaAtual.resumo.aliquotaEfetiva);
+            document.getElementById('aliquota-nova').textContent = formatPercent(novoSistema.resumo.aliquotaEfetiva);
+            document.getElementById('diferenca-aliquota').textContent = 
+                (diferenca.aliquotaEfetiva >= 0 ? '+' : '') + formatPercent(diferenca.aliquotaEfetiva);
+            document.getElementById('diferenca-aliquota-container').className = 
+                `flex justify-between font-bold ${getDiferencaColor(diferenca.aliquotaEfetiva)}`;
+
+            // Atualizar Resumo
+            document.getElementById('resumo-consumo-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.tributosConsumo)} → ${formatMoney(novoSistema.resumo.tributosConsumo)}`;
+            document.getElementById('resumo-consumo-diferenca').textContent = 
+                (diferenca.tributosConsumo >= 0 ? '+' : '') + formatMoney(diferenca.tributosConsumo);
+            document.getElementById('resumo-consumo-diferenca').className = 
+                `font-bold ${getDiferencaColor(diferenca.tributosConsumo)}`;
+
+            document.getElementById('resumo-lucro-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.tributosLucro)} → ${formatMoney(novoSistema.resumo.tributosLucro)}`;
+            document.getElementById('resumo-lucro-diferenca').textContent = 
+                (diferenca.tributosLucro >= 0 ? '+' : '') + formatMoney(diferenca.tributosLucro);
+            document.getElementById('resumo-lucro-diferenca').className = 
+                `font-bold ${getDiferencaColor(diferenca.tributosLucro)}`;
+
+            document.getElementById('resumo-total-valores').textContent = 
+                `${formatMoney(sistemaAtual.resumo.totalTributos)} → ${formatMoney(novoSistema.resumo.totalTributos)}`;
+            document.getElementById('resumo-total-diferenca').textContent = 
+                (diferenca.totalTributos >= 0 ? '+' : '') + formatMoney(diferenca.totalTributos);
+            document.getElementById('resumo-total-diferenca').className = 
+                `font-bold text-lg ${getDiferencaColor(diferenca.totalTributos)}`;
+
+            document.getElementById('resumo-lucro-liquido-valores').textContent = 
+                `${formatMoney(sistemaAtual.resultado.lucroLiquido)} → ${formatMoney(novoSistema.resultado.lucroLiquido)}`;
+            document.getElementById('resumo-lucro-liquido-diferenca').textContent = 
+                (diferenca.lucroLiquido >= 0 ? '+' : '') + formatMoney(diferenca.lucroLiquido);
+            document.getElementById('resumo-lucro-liquido-diferenca').className = 
+                `font-bold text-lg ${getDiferencaColor(-diferenca.lucroLiquido)}`;
+        }
+
+        // Função para definir cenário
+        function setCenario(valorCompra, valorVenda, icmsOrigem, icmsDestino) {
+            document.getElementById('valorCompra').value = valorCompra;
+            document.getElementById('valorVenda').value = valorVenda;
+            document.getElementById('icmsOrigem').value = icmsOrigem;
+            document.getElementById('icmsDestino').value = icmsDestino;
+            atualizarCalculos();
+        }
+
+        // Função para validar entrada de ICMS
+        function validarIcms(input) {
+            const value = input.value;
+            // Permite apenas números, ponto e vírgula
+            if (!/^\d*[.,]?\d*$/.test(value)) {
+                input.value = value.slice(0, -1);
+                return;
+            }
+        }
+
+        function formatarIcms(input) {
+            // Ao sair do campo, formatar o valor
+            const numValue = parseFloat(input.value.replace(',', '.')) || 0;
+            if (numValue > 30) {
+                input.value = '30';
+            } else {
+                input.value = numValue.toString();
+            }
+            atualizarCalculos();
+        }
+
+        // Função para atualizar título baseado no regime
+        function atualizarTitulo() {
+            const regime = document.getElementById('regimeTributario').value;
+            const titulo = document.getElementById('tituloSimulador');
+            
+            switch(regime) {
+                case 'lucro_real':
+                    titulo.textContent = 'Simulador da Reforma Tributária - Lucro Real';
+                    break;
+                case 'lucro_presumido':
+                    titulo.textContent = 'Simulador da Reforma Tributária - Lucro Presumido';
+                    break;
+                case 'simples_nacional':
+                    titulo.textContent = 'Simulador da Reforma Tributária - Simples Nacional';
+                    break;
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar event listeners aos inputs
+            document.getElementById('valorCompra').addEventListener('input', atualizarCalculos);
+            document.getElementById('valorVenda').addEventListener('input', atualizarCalculos);
+            
+            // Regime tributário
+            document.getElementById('regimeTributario').addEventListener('change', function() {
+                atualizarTitulo();
+                atualizarCalculos();
             });
             
-            closeModalBtn.addEventListener('click', () => {
-                priorityModal.classList.add('hidden');
-                priorityModal.classList.remove('flex');
+            // ICMS com validação
+            document.getElementById('icmsOrigem').addEventListener('input', function() {
+                validarIcms(this);
+                atualizarCalculos();
+            });
+            document.getElementById('icmsOrigem').addEventListener('blur', function() {
+                formatarIcms(this);
+            });
+            
+            document.getElementById('icmsDestino').addEventListener('input', function() {
+                validarIcms(this);
+                atualizarCalculos();
+            });
+            document.getElementById('icmsDestino').addEventListener('blur', function() {
+                formatarIcms(this);
             });
 
-            closeContextModalBtn.addEventListener('click', () => {
-                contextModal.classList.add('hidden');
-                contextModal.classList.remove('flex');
-            });
-
-            closeObjetivoModalBtn.addEventListener('click', () => {
-                objetivoModal.classList.add('hidden');
-                objetivoModal.classList.remove('flex');
-            });
-
-            closeReqFuncionaisModalBtn.addEventListener('click', () => {
-                reqFuncionaisModal.classList.add('hidden');
-                reqFuncionaisModal.classList.remove('flex');
-            });
-
-            closeReqTecnicosModalBtn.addEventListener('click', () => {
-                reqTecnicosModal.classList.add('hidden');
-                reqTecnicosModal.classList.remove('flex');
-            });
-
-            closeUsuariosModalBtn.addEventListener('click', () => {
-                usuariosModal.classList.add('hidden');
-                usuariosModal.classList.remove('flex');
-            });
-
-            closeRecursosModalBtn.addEventListener('click', () => {
-                recursosModal.classList.add('hidden');
-                recursosModal.classList.remove('flex');
-            });
-
-            closeImpactoModalBtn.addEventListener('click', () => {
-                impactoModal.classList.add('hidden');
-                impactoModal.classList.remove('flex');
-            });
-
-            priorityModal.addEventListener('click', (e) => {
-                if (e.target === priorityModal) {
-                    priorityModal.classList.add('hidden');
-                    priorityModal.classList.remove('flex');
-                }
-            });
-
-            contextModal.addEventListener('click', (e) => {
-                if (e.target === contextModal) {
-                    contextModal.classList.add('hidden');
-                    contextModal.classList.remove('flex');
-                }
-            });
-
-            objetivoModal.addEventListener('click', (e) => {
-                if (e.target === objetivoModal) {
-                    objetivoModal.classList.add('hidden');
-                    objetivoModal.classList.remove('flex');
-                }
-            });
-
-            reqFuncionaisModal.addEventListener('click', (e) => {
-                if (e.target === reqFuncionaisModal) {
-                    reqFuncionaisModal.classList.add('hidden');
-                    reqFuncionaisModal.classList.remove('flex');
-                }
-            });
-
-            reqTecnicosModal.addEventListener('click', (e) => {
-                if (e.target === reqTecnicosModal) {
-                    reqTecnicosModal.classList.add('hidden');
-                    reqTecnicosModal.classList.remove('flex');
-                }
-            });
-
-            usuariosModal.addEventListener('click', (e) => {
-                if (e.target === usuariosModal) {
-                    usuariosModal.classList.add('hidden');
-                    usuariosModal.classList.remove('flex');
-                }
-            });
-
-            recursosModal.addEventListener('click', (e) => {
-                if (e.target === recursosModal) {
-                    recursosModal.classList.add('hidden');
-                    recursosModal.classList.remove('flex');
-                }
-            });
-
-            impactoModal.addEventListener('click', (e) => {
-                if (e.target === impactoModal) {
-                    impactoModal.classList.add('hidden');
-                    impactoModal.classList.remove('flex');
-                }
-            });
+            // Calcular valores iniciais
+            atualizarCalculos();
         });
     </script>
 </body>
 </html>
-
